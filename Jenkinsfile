@@ -1,27 +1,24 @@
-pipeline {
-  agent any
-    
-  tools {nodejs "node"}
-    
-  stages {
-        
-    stage('Git') {
-      steps {
-        git 'https://github.com/lmadueno10/observatorio.git'
-      }
+node {
+    def app
+
+    stage('Clone repository') {
+        checkout scm
     }
-     
-    stage('Build') {
-      steps {
-        sh 'npm install'
-      }
-    }  
-    
-            
-    stage('Test') {
-      steps {
-        sh 'node test'
-      }
+
+    stage('Build image') {
+        app = docker.build("lmadueno/observatorio")
     }
-  }
+
+    stage('Test image') {
+        app.inside {
+            sh 'echo "Tests passed"'
+        }
+    }
+
+    stage('Push image') {
+        docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
+            app.push("${env.BUILD_NUMBER}")
+            app.push("latest")
+        }
+    }
 }
