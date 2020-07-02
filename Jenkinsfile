@@ -1,10 +1,6 @@
 node {
     def app
-
-    agent {
-        dockerfile true
-    }
-
+    
     stage('Clone repository') {
         checkout scm
     }
