@@ -1,10 +1,10 @@
 pipeline {
   agent any
-  tools {NodeJS "node" }
+  tools {nodejs "nodejs" }
   stages {
     stage('Cloning Git') {
       steps {
-        git 'https://github.com/sanjeevkumarrao/node-hello-world'
+        git 'https://github.com/lmadueno10/observatorio'
       }
     }
     stage('Build') {
