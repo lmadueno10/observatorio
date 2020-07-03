@@ -1,24 +1,21 @@
-node {
-    def app
-    
-    stage('Clone repository') {
-        checkout scm
+pipeline {
+  agent any
+  tools {nodejs "node" }
+  stages {
+    stage('Cloning Git') {
+      steps {
+        git 'https://github.com/sanjeevkumarrao/node-hello-world'
+      }
     }
-
-    stage('Build image') {
-        app = docker.build("lmadueno/observatorio")
+    stage('Build') {
+       steps {
+         sh 'npm install'
+       }
     }
-
-    stage('Test image') {
-        app.inside {
-            sh 'echo "Tests passed"'
-        }
+    stage('Test') {
+      steps {
+        sh 'npm test'
+      }
     }
-
-    stage('Push image') {
-        docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
-            app.push("${env.BUILD_NUMBER}")
-            app.push("latest")
-        }
-    }
+  }
 }
